@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Real Scripts Hub</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', 'Arial', sans-serif;
+      background: #020617;
+      color: #e5e7eb;
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    /* SPLASH SCREEN */
+    .splash-screen {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at center, #0f172a 0%, #020617 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      transition: transform 1s cubic-bezier(0.87, 0, 0.13, 1);
+    }
+
+    .splash-screen.hidden {
+      transform: translateY(-100%);
+    }
+
+    /* GLOWING TITLE */
+    .glowing-title {
+      font-size: 5rem;
+      font-weight: 900;
+      background: linear-gradient(45deg, #7c3aed, #a78bfa, #c4b5fd, #ddd6fe);
+      background-size: 300% 300%;
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: gradientShift 4s ease infinite, float 3s ease-in-out infinite;
+      text-align: center;
+      margin-bottom: 1rem;
+      letter-spacing: 2px;
+      text-shadow: 0 0 30px rgba(124, 58, 237, 0.5);
+    }
+
+    .subtitle {
+      font-size: 1.2rem;
+      color: #9ca3af;
+      margin-bottom: 3rem;
+      opacity: 0.8;
+      animation: fadeInUp 1s ease 0.5s both;
+    }
+
+    /* ENTER BUTTON */
+    .enter-btn {
+      background: linear-gradient(45deg, #7c3aed, #a78bfa);
+      border: none;
+      padding: 1.2rem 3rem;
+      border-radius: 50px;
+      color: white;
+      font-size: 1.2rem;
+      font-weight: 600;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease;
+      animation: pulse 2s infinite;
+    }
+
+    .enter-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 40px rgba(124, 58, 237, 0.6);
+      animation: none;
+    }
+
+    .enter-btn::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.3);
+      transform: translate(-50%, -50%);
+      transition: width 0.6s, height 0.6s;
+    }
+
+    .enter-btn:active::before {
+      width: 300px;
+      height: 300px;
+    }
+
+    /* PARTICLE BACKGROUND */
+    .particles {
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+    }
+
+    .particle {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: #7c3aed;
+      border-radius: 50%;
+      opacity: 0.3;
+    }
+
+    /* MAIN CONTENT */
+    .main-content {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+      display: none;
+    }
+
+    .main-content.show {
+      opacity: 1;
+      transform: translateY(0);
+      display: block;
+    }
+
+    /* HEADER */
+    header {
+      background: rgba(2,6,23,0.7);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid #1f2937;
+      padding: 20px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      animation: slideDown 0.6s ease;
+    }
+    header h1 {
+      font-size: 22px;
+      margin: 0;
+      color: #a78bfa;
+      letter-spacing: 0.5px;
+    }
+    header span {
+      color: #9ca3af;
+      font-size: 13px;
+    }
+
+    /* SIDEBAR */
+    nav {
+      background: rgba(2,6,23,0.9);
+      width: 230px;
+      min-height: 100vh;
+      padding: 25px 20px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      border-right: 1px solid #1f2937;
+      animation: slideLeft 0.6s ease;
+    }
+    nav h3 {
+      color: #9ca3af;
+      font-size: 12px;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+      letter-spacing: 1px;
+    }
+    nav button {
+      width: 100%;
+      background: transparent;
+      border: none;
+      color: #e5e7eb;
+      padding: 12px 14px;
+      text-align: left;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-bottom: 8px;
+      font-size: 14px;
+      position: relative;
+      overflow: hidden;
+      transition: 0.25s;
+    }
+    nav button::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(124,58,237,0.15), transparent);
+      opacity: 0;
+      transition: 0.25s;
+    }
+    nav button:hover::before {
+      opacity: 1;
+    }
+    nav button:hover {
+      color: #c4b5fd;
+      transform: translateX(4px);
+    }
+
+    /* CONTENT */
+    .content {
+      margin-left: 260px;
+      padding: 35px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 25px;
+    }
+
+    /* ENHANCED CARDS */
+    .card {
+      background: linear-gradient(145deg, #0f172a, #020617);
+      border: 1px solid #1f2937;
+      border-radius: 16px;
+      padding: 20px;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      position: relative;
+      overflow: hidden;
+      animation: popUp 0.6s ease;
+      cursor: pointer;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(45deg, transparent, rgba(124, 58, 237, 0.1), transparent);
+      transform: rotate(45deg);
+      transition: all 0.6s ease;
+      opacity: 0;
+    }
+
+    .card:hover::before {
+      opacity: 1;
+      animation: shine 1.5s ease;
+    }
+
+    .card::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 70% 20%, rgba(124,58,237,0.2), transparent 60%);
+      opacity: 0;
+      transition: 0.4s;
+      z-index: 1;
+    }
+
+    .card:hover::after {
+      opacity: 1;
+    }
+
+    .card:hover {
+      transform: translateY(-8px) scale(1.03);
+      border-color: #7c3aed;
+      box-shadow: 
+        0 15px 35px rgba(124, 58, 237, 0.2),
+        0 5px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    /* CARD BADGES */
+    .card-badge {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      z-index: 2;
+    }
+
+    .badge-premium {
+      background: linear-gradient(45deg, #FFD700, #FFA500);
+      color: #000;
+    }
+
+    .badge-popular {
+      background: linear-gradient(45deg, #FF6B6B, #FF8E8E);
+      color: white;
+    }
+
+    .badge-new {
+      background: linear-gradient(45deg, #4CAF50, #8BC34A);
+      color: white;
+    }
+
+    /* CARD TAGS */
+    .card-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin: 12px 0;
+    }
+
+    .tag {
+      background: rgba(124, 58, 237, 0.15);
+      color: #c4b5fd;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 500;
+    }
+
+    .card h3 {
+      margin: 0 0 10px 0;
+      font-size: 18px;
+      color: #ddd6fe;
+      position: relative;
+      z-index: 2;
+    }
+
+    .card p {
+      font-size: 13px;
+      color: #9ca3af;
+      margin-bottom: 16px;
+      line-height: 1.5;
+      position: relative;
+      z-index: 2;
+    }
+
+    .card button {
+      background: linear-gradient(90deg, #7c3aed, #a78bfa);
+      border: none;
+      color: white;
+      padding: 10px 16px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      position: relative;
+      z-index: 2;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.5s ease;
+    }
+
+    .card button:hover::before {
+      left: 100%;
+    }
+
+    .card button:hover {
+      transform: scale(1.05);
+      box-shadow: 
+        0 5px 20px rgba(124, 58, 237, 0.4),
+        0 0 10px rgba(124, 58, 237, 0.3);
+    }
+
+    /* SPECIAL XETER CARD */
+    .card-xeter {
+      border-color: #4F46E5;
+      background: linear-gradient(145deg, #0f172a, #1e1b4b);
+    }
+
+    .card-xeter:hover {
+      border-color: #6366F1;
+      box-shadow: 
+        0 15px 35px rgba(79, 70, 229, 0.3),
+        0 5px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .badge-xeter {
+      background: linear-gradient(45deg, #4F46E5, #6366F1);
+      color: white;
+    }
+
+    .badge-updated {
+      background: linear-gradient(45deg, #7c3aed, #a78bfa);
+      color: white;
+    }
+
+    .catalog { display: none; }
+    .catalog.active { display: block; }
+
+    footer {
+      margin-left: 260px;
+      padding: 25px;
+      color: #6b7280;
+      font-size: 12px;
+      text-align: center;
+      border-top: 1px solid #1f2937;
+      margin-top: 40px;
+    }
+
+    /* ANIMATIONS */
+    @keyframes gradientShift {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-20px); }
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes slideLeft {
+      from { transform: translateX(-40px); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    @keyframes slideDown {
+      from { transform: translateY(-30px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    @keyframes popUp {
+      from { transform: scale(0.95) translateY(10px); opacity: 0; }
+      to { transform: scale(1) translateY(0); opacity: 1; }
+    }
+
+    @keyframes shine {
+      0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+      100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+    }
+
+    @keyframes particleFloat {
+      0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 0;
+      }
+      10% {
+        opacity: 1;
+      }
+      90% {
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-100vh) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    /* CODE HIGHLIGHTING */
+    .code-container {
+      background: #0f172a;
+      border: 1px solid #1f2937;
+      border-radius: 12px;
+      padding: 15px;
+      margin-top: 15px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .code-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #1f2937;
+    }
+
+    .code-lang {
+      color: #7c3aed;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .copy-btn {
+      background: rgba(124, 58, 237, 0.1);
+      border: 1px solid #7c3aed;
+      color: #c4b5fd;
+      padding: 5px 10px;
+      border-radius: 6px;
+      font-size: 11px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .copy-btn:hover {
+      background: rgba(124, 58, 237, 0.2);
+      transform: scale(1.05);
+    }
+  </style>
+</head>
+<body>
+
+<!-- SPLASH SCREEN -->
+<div class="splash-screen" id="splashScreen">
+  <div class="particles" id="particles"></div>
+  <h1 class="glowing-title">REAL SCRIPTS</h1>
+  <p class="subtitle">Премиум скрипты для Roblox</p>
+  <button class="enter-btn" onclick="enterCatalog()">
+    <span>Войти в каталог</span>
+    <svg style="margin-left: 10px; display: inline-block;" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M5 12h14M12 5l7 7-7 7"/>
+    </svg>
+  </button>
+</div>
+
+<!-- MAIN CONTENT (скрыт до нажатия кнопки) -->
+<div class="main-content" id="mainContent">
+  <header>
+    <h1>Real Scripts Hub</h1>
+    <span>Blox Fruits • Steal a Brainrot • 99 Nights</span>
+  </header>
+
+  <nav>
+    <h3>Каталоги</h3>
+    <button onclick="showCatalog('blox')">🍏 Blox Fruits</button>
+    <button onclick="showCatalog('steal')">🧠 Steal a Brainrot</button>
+    <button onclick="showCatalog('nights')">🌙 99 Nights</button>
+  </nav>
+
+  <div class="content">
+    <div id="blox" class="catalog active">
+      <div class="grid">
+        <div class="card" onclick="openModal('astral')">
+          <div class="card-badge badge-premium">PREMIUM</div>
+          <h3>Astral Hub</h3>
+          <p>Полный набор функций для максимальной эффективности в Blox Fruits</p>
+          <div class="card-tags">
+            <span class="tag">Auto Farm</span>
+            <span class="tag">ESP</span>
+            <span class="tag">Bosses</span>
+            <span class="tag">Teleport</span>
+          </div>
+          <button>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+              <line x1="16" y1="13" x2="8" y2="13"/>
+              <line x1="16" y1="17" x2="8" y2="17"/>
+              <polyline points="10 9 9 9 8 9"/>
+            </svg>
+            View Script
+          </button>
+        </div>
+        
+        <div class="card" onclick="openModal('bluex')">
+          <div class="card-badge badge-popular">POPULAR</div>
+          <h3>Blue X Hub</h3>
+          <p>Быстрая атака, телепортация и улучшение характеристик</p>
+          <div class="card-tags">
+            <span class="tag">Fast Attack</span>
+            <span class="tag">Teleport</span>
+            <span class="tag">Stats</span>
+            <span class="tag">No Clip</span>
+          </div>
+          <button>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+              <line x1="16" y1="13" x2="8" y2="13"/>
+              <line x1="16" y1="17" x2="8" y2="17"/>
+              <polyline points="10 9 9 9 8 9"/>
+            </svg>
+            View Script
+          </button>
+        </div>
+        
+        <div class="card card-xeter" onclick="openModal('xeter')">
+          <div class="card-badge badge-xeter">XETER V4</div>
+          <h3>Xeter Hub V4</h3>
+          <p>Мощный скрипт для Blox Fruits с поддержкой команды Marines</p>
+          <div class="card-tags">
+            <span class="tag">Auto Farm</span>
+            <span class="tag">God Mode</span>
+            <span class="tag">Marines</span>
+            <span class="tag">ESP</span>
+            <span class="tag">Teleport</span>
+          </div>
+          
+          <div class="code-container">
+            <div class="code-header">
+              <span class="code-lang">LUA SCRIPT</span>
+              <button class="copy-btn" onclick="copyCode('xeter-code')">Copy</button>
+            </div>
+            <div class="code-content" id="xeter-code">
+-- Xeter Hub V4 для Blox Fruits
+getgenv().Version = "V4"
+getgenv().Team = "Marines"
+loadstring(game:HttpGet("https://raw.githubusercontent.com/TlDinhKhoi/Xeter/refs/heads/main/Main.lua"))()
+            </div>
+          </div>
+          
+          <button style="margin-top: 15px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+            </svg>
+            Copy Script
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="steal" class="catalog">
+      <!-- Убраны все карточки из этого раздела -->
+    </div>
+
+    <div id="nights" class="catalog">
+      <!-- Убраны все карточки из этого раздела -->
+    </div>
+  </div>
+
+  <footer>
+    © 2026 Real Scripts Hub | Все скрипты предоставляются "как есть"
+  </footer>
+</div>
+
+<!-- ENHANCED MODAL -->
+<div id="modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);backdrop-filter:blur(6px);align-items:center;justify-content:center;z-index:999;">
+  <div id="modalBox" style="background:#0f172a;border:1px solid #1f2937;border-radius:16px;padding:25px;max-width:600px;width:90%;animation:popUp 0.4s;position:relative;overflow:hidden;">
+    
+    <!-- Modal background effect -->
+    <div style="position:absolute;top:0;left:0;width:100%;height:4px;background:linear-gradient(90deg,#7c3aed,#a78bfa);"></div>
+    
+    <h3 id="modalTitle" style="color:#c4b5fd;margin-top:0;font-size:20px;margin-bottom:15px;"></h3>
+    
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px;">
+      <span id="modalBadge" style="background:linear-gradient(45deg,#7c3aed,#a78bfa);color:white;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600;"></span>
+    </div>
+    
+    <ul id="modalList" style="font-size:14px;color:#9ca3af;line-height:1.6;margin-bottom:20px;padding-left:20px;"></ul>
+    
+    <div style="background:#020617;border:1px solid #1f2937;border-radius:12px;padding:15px;margin-bottom:20px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+        <span style="color:#7c3aed;font-size:13px;font-weight:600;">LUA КОД</span>
+        <button onclick="copyAnimated()" id="copyBtn" style="background:linear-gradient(90deg,#7c3aed,#a78bfa);border:none;border-radius:8px;padding:8px 15px;color:white;cursor:pointer;font-size:12px;font-weight:600;transition:all 0.3s ease;">Copy Script</button>
+      </div>
+      <pre id="modalCode" style="background:#020617;border-radius:8px;padding:15px;font-size:13px;color:#e5e7eb;overflow:auto;margin:0;font-family:'Consolas','Monaco',monospace;line-height:1.5;"></pre>
+    </div>
+    
+    <div style="display:flex;gap:10px;margin-top:20px;">
+      <button onclick="closeModal()" style="flex:1;background:#1f2937;border:none;border-radius:10px;padding:12px;color:white;cursor:pointer;font-weight:600;transition:all 0.3s ease;">Close</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ГЛАВНАЯ ФУНКЦИЯ ВХОДА В КАТАЛОГ
+function enterCatalog() {
+  console.log("Кнопка нажата!");
+  
+  const splashScreen = document.getElementById('splashScreen');
+  const mainContent = document.getElementById('mainContent');
+  const button = event.target;
+  
+  if (!splashScreen || !mainContent) {
+    console.error("Элементы не найдены!");
+    return;
+  }
+  
+  // Анимация нажатия кнопки
+  button.style.transform = 'scale(0.95)';
+  
+  // Ждем 300мс и скрываем начальный экран
+  setTimeout(() => {
+    splashScreen.classList.add('hidden');
+    
+    // Ждем еще 800мс и показываем основной контент
+    setTimeout(() => {
+      mainContent.classList.add('show');
+      console.log("Переход выполнен!");
+    }, 800);
+  }, 300);
+}
+
+// Создание частиц
+function createParticles() {
+  const container = document.getElementById('particles');
+  if (!container) return;
+  
+  for (let i = 0; i < 50; i++) {
+    const particle = document.createElement('div');
+    particle.className = 'particle';
+    
+    particle.style.left = Math.random() * 100 + '%';
+    particle.style.top = Math.random() * 100 + '%';
+    particle.style.width = (Math.random() * 4 + 1) + 'px';
+    particle.style.height = particle.style.width;
+    
+    const duration = Math.random() * 20 + 10;
+    const delay = Math.random() * 5;
+    particle.style.animation = `particleFloat ${duration}s linear ${delay}s infinite`;
+    
+    const colors = ['#7c3aed', '#a78bfa', '#c4b5fd', '#ddd6fe'];
+    particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+    
+    container.appendChild(particle);
+  }
+}
+
+// Инициализация при загрузке
+document.addEventListener('DOMContentLoaded', function() {
+  createParticles();
+});
+
+// Скрипты для каталога
+const scripts = {
+  astral: {
+    title: 'Astral Hub – Blox Fruits',
+    badge: 'PREMIUM',
+    list: [
+      '✅ Auto Farm - автоматический сбор опыта',
+      '✅ Boss Farm - автоматическая фарм боссов',
+      '✅ Fruit Sniper - поиск и сбор фруктов',
+      '✅ ESP - отображение игроков и NPC',
+      '✅ Fast Attack - увеличенная скорость атаки',
+      '✅ Teleport - телепортация по точкам'
+    ],
+    code: 'loadstring(game:HttpGet("https://raw.githubusercontent.com/Overgustx2/Main/refs/heads/main/BloxFruits_25.html"))()'
+  },
+  bluex: {
+    title: 'Blue X Hub – Blox Fruits',
+    badge: 'POPULAR',
+    list: [
+      '✅ Auto Farm - автоматический фарм',
+      '✅ Fast Attack - быстрые атаки',
+      '✅ Stats - улучшение характеристик',
+      '✅ Teleport - телепортация',
+      '✅ No Clip - прохождение сквозь стены'
+    ],
+    code: 'loadstring(game:HttpGet("https://raw.githubusercontent.com/Dev-BlueX/BlueX-Hub/refs/heads/main/Main.lua"))()'
+  },
+  xeter: {
+    title: 'Xeter Hub V4 – Blox Fruits',
+    badge: 'XETER V4',
+    list: [
+      '✅ Auto Farm - автоматический фарм',
+      '✅ God Mode - режим бога',
+      '✅ Marines - поддержка команды Marines',
+      '✅ ESP - полное отображение окружения',
+      '✅ Teleport - быстрая телепортация',
+      '✅ Fast Attack - супер быстрые атаки'
+    ],
+    code: `getgenv().Version = "V4"
+getgenv().Team = "Marines"
+loadstring(game:HttpGet("https://raw.githubusercontent.com/TlDinhKhoi/Xeter/refs/heads/main/Main.lua"))()`
+  }
+};
+
+let currentCode = '';
+
+function showCatalog(id) {
+  document.querySelectorAll('.catalog').forEach(c => c.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function openModal(key) {
+  const script = scripts[key];
+  if (!script) return;
+  
+  currentCode = script.code;
+  document.getElementById('modalTitle').textContent = script.title;
+  document.getElementById('modalBadge').textContent = script.badge;
+  document.getElementById('modalList').innerHTML = script.list.map(item => `<li>${item}</li>`).join('');
+  document.getElementById('modalCode').textContent = script.code;
+  document.getElementById('modal').style.display = 'flex';
+}
+
+function copyCode(elementId) {
+  const element = document.getElementById(elementId);
+  const text = element.textContent;
+  
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = event.target;
+    btn.textContent = 'Copied!';
+    btn.style.background = 'linear-gradient(45deg, #4CAF50, #8BC34A)';
+    
+    setTimeout(() => {
+      btn.textContent = 'Copy';
+      btn.style.background = '';
+    }, 1500);
+  });
+}
+
+function closeModal() {
+  document.getElementById('modal').style.display = 'none';
+}
+
+function copyAnimated() {
+  if (!currentCode) return;
+  
+  navigator.clipboard.writeText(currentCode).then(() => {
+    const btn = document.getElementById('copyBtn');
+    btn.textContent = 'Copied!';
+    btn.style.background = 'linear-gradient(45deg, #4CAF50, #8BC34A)';
+    btn.style.boxShadow = '0 0 20px rgba(76, 175, 80, 0.5)';
+    
+    setTimeout(() => {
+      btn.textContent = 'Copy Script';
+      btn.style.background = 'linear-gradient(90deg, #7c3aed, #a78bfa)';
+      btn.style.boxShadow = 'none';
+    }, 1500);
+  });
+}
+</script>
+
+</body>
+</html>
