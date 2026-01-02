@@ -17,6 +17,70 @@
       color: #e5e7eb;
       overflow-x: hidden;
       min-height: 100vh;
+      cursor: default;
+    }
+
+    /* LANGUAGE SWITCHER */
+    .lang-switcher {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 1001;
+      display: flex;
+      gap: 10px;
+      background: rgba(2, 6, 23, 0.8);
+      backdrop-filter: blur(10px);
+      border: 1px solid #1f2937;
+      border-radius: 50px;
+      padding: 8px;
+    }
+
+    .lang-btn {
+      background: transparent;
+      border: none;
+      color: #9ca3af;
+      padding: 6px 12px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.3s ease;
+    }
+
+    .lang-btn.active {
+      background: linear-gradient(45deg, #7c3aed, #a78bfa);
+      color: white;
+    }
+
+    .lang-btn:hover {
+      color: #c4b5fd;
+    }
+
+    /* SNOWFLAKE CURSOR EFFECT */
+    .snowflake {
+      position: fixed;
+      width: 20px;
+      height: 20px;
+      pointer-events: none;
+      z-index: 9999;
+      animation: snowflakeFall 1.5s linear forwards;
+      opacity: 0.7;
+    }
+
+    .snowflake::before {
+      content: '❄';
+      font-size: 16px;
+      color: #7c3aed;
+    }
+
+    @keyframes snowflakeFall {
+      0% {
+        transform: translateY(-20px) rotate(0deg);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(100vh) rotate(360deg);
+        opacity: 0;
+      }
     }
 
     /* SPLASH SCREEN */
@@ -98,22 +162,6 @@
     .enter-btn:active::before {
       width: 300px;
       height: 300px;
-    }
-
-    /* PARTICLE BACKGROUND */
-    .particles {
-      position: absolute;
-      inset: 0;
-      z-index: -1;
-    }
-
-    .particle {
-      position: absolute;
-      width: 4px;
-      height: 4px;
-      background: #7c3aed;
-      border-radius: 50%;
-      opacity: 0.3;
     }
 
     /* MAIN CONTENT */
@@ -327,6 +375,7 @@
       line-height: 1.5;
       position: relative;
       z-index: 2;
+      text-align: left;
     }
 
     .card button {
@@ -384,11 +433,6 @@
 
     .badge-xeter {
       background: linear-gradient(45deg, #4F46E5, #6366F1);
-      color: white;
-    }
-
-    .badge-updated {
-      background: linear-gradient(45deg, #7c3aed, #a78bfa);
       color: white;
     }
 
@@ -456,76 +500,22 @@
       0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
       100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
     }
-
-    @keyframes particleFloat {
-      0% {
-        transform: translateY(0) rotate(0deg);
-        opacity: 0;
-      }
-      10% {
-        opacity: 1;
-      }
-      90% {
-        opacity: 1;
-      }
-      100% {
-        transform: translateY(-100vh) rotate(360deg);
-        opacity: 0;
-      }
-    }
-
-    /* CODE HIGHLIGHTING */
-    .code-container {
-      background: #0f172a;
-      border: 1px solid #1f2937;
-      border-radius: 12px;
-      padding: 15px;
-      margin-top: 15px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .code-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 10px;
-      padding-bottom: 10px;
-      border-bottom: 1px solid #1f2937;
-    }
-
-    .code-lang {
-      color: #7c3aed;
-      font-size: 12px;
-      font-weight: 600;
-    }
-
-    .copy-btn {
-      background: rgba(124, 58, 237, 0.1);
-      border: 1px solid #7c3aed;
-      color: #c4b5fd;
-      padding: 5px 10px;
-      border-radius: 6px;
-      font-size: 11px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-
-    .copy-btn:hover {
-      background: rgba(124, 58, 237, 0.2);
-      transform: scale(1.05);
-    }
   </style>
 </head>
 <body>
 
+<!-- LANGUAGE SWITCHER -->
+<div class="lang-switcher">
+  <button class="lang-btn active" onclick="setLanguage('ru')">🇷🇺 RU</button>
+  <button class="lang-btn" onclick="setLanguage('en')">🇺🇸 EN</button>
+</div>
+
 <!-- SPLASH SCREEN -->
 <div class="splash-screen" id="splashScreen">
-  <div class="particles" id="particles"></div>
-  <h1 class="glowing-title">REAL SCRIPTS</h1>
-  <p class="subtitle">Премиум скрипты для Roblox</p>
+  <h1 class="glowing-title" data-i18n="title">REAL SCRIPTS</h1>
+  <p class="subtitle" data-i18n="subtitle">Премиум скрипты для Roblox</p>
   <button class="enter-btn" onclick="enterCatalog()">
-    <span>Войти в каталог</span>
+    <span data-i18n="enterBtn">Войти в каталог</span>
     <svg style="margin-left: 10px; display: inline-block;" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
       <path d="M5 12h14M12 5l7 7-7 7"/>
     </svg>
@@ -535,24 +525,24 @@
 <!-- MAIN CONTENT (скрыт до нажатия кнопки) -->
 <div class="main-content" id="mainContent">
   <header>
-    <h1>Real Scripts Hub</h1>
-    <span>Blox Fruits • Steal a Brainrot • 99 Nights</span>
+    <h1 data-i18n="headerTitle">Real Scripts Hub</h1>
+    <span data-i18n="headerSubtitle">Blox Fruits • Steal a Brainrot • 99 Nights</span>
   </header>
 
   <nav>
-    <h3>Каталоги</h3>
-    <button onclick="showCatalog('blox')">🍏 Blox Fruits</button>
-    <button onclick="showCatalog('steal')">🧠 Steal a Brainrot</button>
-    <button onclick="showCatalog('nights')">🌙 99 Nights</button>
+    <h3 data-i18n="catalogTitle">Каталоги</h3>
+    <button onclick="showCatalog('blox')" data-i18n="bloxBtn">🍏 Blox Fruits</button>
+    <button onclick="showCatalog('steal')" data-i18n="stealBtn">🧠 Steal a Brainrot</button>
+    <button onclick="showCatalog('nights')" data-i18n="nightsBtn">🌙 99 Nights</button>
   </nav>
 
   <div class="content">
     <div id="blox" class="catalog active">
       <div class="grid">
         <div class="card" onclick="openModal('astral')">
-          <div class="card-badge badge-premium">PREMIUM</div>
+          <div class="card-badge badge-premium" data-i18n="premiumBadge">PREMIUM</div>
           <h3>Astral Hub</h3>
-          <p>Полный набор функций для максимальной эффективности в Blox Fruits</p>
+          <p data-i18n="astralDesc">Полный набор функций для максимальной эффективности в Blox Fruits</p>
           <div class="card-tags">
             <span class="tag">Auto Farm</span>
             <span class="tag">ESP</span>
@@ -567,14 +557,14 @@
               <line x1="16" y1="17" x2="8" y2="17"/>
               <polyline points="10 9 9 9 8 9"/>
             </svg>
-            View Script
+            <span data-i18n="viewScript">View Script</span>
           </button>
         </div>
         
         <div class="card" onclick="openModal('bluex')">
-          <div class="card-badge badge-popular">POPULAR</div>
+          <div class="card-badge badge-popular" data-i18n="popularBadge">POPULAR</div>
           <h3>Blue X Hub</h3>
-          <p>Быстрая атака, телепортация и улучшение характеристик</p>
+          <p data-i18n="bluexDesc">Быстрая атака, телепортация и улучшение характеристик</p>
           <div class="card-tags">
             <span class="tag">Fast Attack</span>
             <span class="tag">Teleport</span>
@@ -589,41 +579,30 @@
               <line x1="16" y1="17" x2="8" y2="17"/>
               <polyline points="10 9 9 9 8 9"/>
             </svg>
-            View Script
+            <span data-i18n="viewScript">View Script</span>
           </button>
         </div>
         
         <div class="card card-xeter" onclick="openModal('xeter')">
           <div class="card-badge badge-xeter">XETER V4</div>
           <h3>Xeter Hub V4</h3>
-          <p>Мощный скрипт для Blox Fruits с поддержкой команды Marines</p>
+          <p data-i18n="xeterDesc">Мощный скрипт для Blox Fruits с частыми обновлениями</p>
           <div class="card-tags">
             <span class="tag">Auto Farm</span>
             <span class="tag">God Mode</span>
-            <span class="tag">Marines</span>
             <span class="tag">ESP</span>
             <span class="tag">Teleport</span>
+            <span class="tag">Updates</span>
           </div>
-          
-          <div class="code-container">
-            <div class="code-header">
-              <span class="code-lang">LUA SCRIPT</span>
-              <button class="copy-btn" onclick="copyCode('xeter-code')">Copy</button>
-            </div>
-            <div class="code-content" id="xeter-code">
--- Xeter Hub V4 для Blox Fruits
-getgenv().Version = "V4"
-getgenv().Team = "Marines"
-loadstring(game:HttpGet("https://raw.githubusercontent.com/TlDinhKhoi/Xeter/refs/heads/main/Main.lua"))()
-            </div>
-          </div>
-          
-          <button style="margin-top: 15px;">
+          <button>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
-              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+              <line x1="16" y1="13" x2="8" y2="13"/>
+              <line x1="16" y1="17" x2="8" y2="17"/>
+              <polyline points="10 9 9 9 8 9"/>
             </svg>
-            Copy Script
+            <span data-i18n="viewScript">View Script</span>
           </button>
         </div>
       </div>
@@ -639,7 +618,7 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/TlDinhKhoi/Xeter/refs
   </div>
 
   <footer>
-    © 2026 Real Scripts Hub | Все скрипты предоставляются "как есть"
+    <span data-i18n="footerText">© 2026 Real Scripts Hub | Все скрипты предоставляются "как есть"</span>
   </footer>
 </div>
 
@@ -660,14 +639,18 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/TlDinhKhoi/Xeter/refs
     
     <div style="background:#020617;border:1px solid #1f2937;border-radius:12px;padding:15px;margin-bottom:20px;">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-        <span style="color:#7c3aed;font-size:13px;font-weight:600;">LUA КОД</span>
-        <button onclick="copyAnimated()" id="copyBtn" style="background:linear-gradient(90deg,#7c3aed,#a78bfa);border:none;border-radius:8px;padding:8px 15px;color:white;cursor:pointer;font-size:12px;font-weight:600;transition:all 0.3s ease;">Copy Script</button>
+        <span style="color:#7c3aed;font-size:13px;font-weight:600;" data-i18n="luaCode">LUA КОД</span>
+        <button onclick="copyAnimated()" id="copyBtn" style="background:linear-gradient(90deg,#7c3aed,#a78bfa);border:none;border-radius:8px;padding:8px 15px;color:white;cursor:pointer;font-size:12px;font-weight:600;transition:all 0.3s ease;">
+          <span data-i18n="copyScript">Copy Script</span>
+        </button>
       </div>
       <pre id="modalCode" style="background:#020617;border-radius:8px;padding:15px;font-size:13px;color:#e5e7eb;overflow:auto;margin:0;font-family:'Consolas','Monaco',monospace;line-height:1.5;"></pre>
     </div>
     
     <div style="display:flex;gap:10px;margin-top:20px;">
-      <button onclick="closeModal()" style="flex:1;background:#1f2937;border:none;border-radius:10px;padding:12px;color:white;cursor:pointer;font-weight:600;transition:all 0.3s ease;">Close</button>
+      <button onclick="closeModal()" style="flex:1;background:#1f2937;border:none;border-radius:10px;padding:12px;color:white;cursor:pointer;font-weight:600;transition:all 0.3s ease;">
+        <span data-i18n="closeBtn">Close</span>
+      </button>
     </div>
   </div>
 </div>
@@ -679,7 +662,6 @@ function enterCatalog() {
   
   const splashScreen = document.getElementById('splashScreen');
   const mainContent = document.getElementById('mainContent');
-  const button = event.target;
   
   if (!splashScreen || !mainContent) {
     console.error("Элементы не найдены!");
@@ -687,7 +669,7 @@ function enterCatalog() {
   }
   
   // Анимация нажатия кнопки
-  button.style.transform = 'scale(0.95)';
+  event.target.style.transform = 'scale(0.95)';
   
   // Ждем 300мс и скрываем начальный экран
   setTimeout(() => {
@@ -701,35 +683,96 @@ function enterCatalog() {
   }, 300);
 }
 
-// Создание частиц
-function createParticles() {
-  const container = document.getElementById('particles');
-  if (!container) return;
+// СОЗДАНИЕ СНЕЖИНКИ ПРИ КЛИКЕ
+document.addEventListener('click', function(e) {
+  createSnowflake(e.clientX, e.clientY);
+});
+
+function createSnowflake(x, y) {
+  const snowflake = document.createElement('div');
+  snowflake.className = 'snowflake';
+  snowflake.style.left = x + 'px';
+  snowflake.style.top = y + 'px';
   
-  for (let i = 0; i < 50; i++) {
-    const particle = document.createElement('div');
-    particle.className = 'particle';
-    
-    particle.style.left = Math.random() * 100 + '%';
-    particle.style.top = Math.random() * 100 + '%';
-    particle.style.width = (Math.random() * 4 + 1) + 'px';
-    particle.style.height = particle.style.width;
-    
-    const duration = Math.random() * 20 + 10;
-    const delay = Math.random() * 5;
-    particle.style.animation = `particleFloat ${duration}s linear ${delay}s infinite`;
-    
-    const colors = ['#7c3aed', '#a78bfa', '#c4b5fd', '#ddd6fe'];
-    particle.style.background = colors[Math.floor(Math.random() * colors.length)];
-    
-    container.appendChild(particle);
-  }
+  // Случайный размер
+  const size = Math.random() * 20 + 10;
+  snowflake.style.fontSize = size + 'px';
+  
+  // Случайный цвет
+  const colors = ['#7c3aed', '#a78bfa', '#c4b5fd', '#6366F1'];
+  snowflake.style.color = colors[Math.floor(Math.random() * colors.length)];
+  
+  document.body.appendChild(snowflake);
+  
+  // Удалить через 1.5 секунд
+  setTimeout(() => {
+    snowflake.remove();
+  }, 1500);
 }
 
-// Инициализация при загрузке
-document.addEventListener('DOMContentLoaded', function() {
-  createParticles();
-});
+// МУЛЬТИЯЗЫЧНОСТЬ
+const translations = {
+  ru: {
+    title: "REAL SCRIPTS",
+    subtitle: "Премиум скрипты для Roblox",
+    enterBtn: "Войти в каталог",
+    headerTitle: "Real Scripts Hub",
+    headerSubtitle: "Blox Fruits • Steal a Brainrot • 99 Nights",
+    catalogTitle: "Каталоги",
+    bloxBtn: "🍏 Blox Fruits",
+    stealBtn: "🧠 Steal a Brainrot",
+    nightsBtn: "🌙 99 Nights",
+    premiumBadge: "PREMIUM",
+    popularBadge: "POPULAR",
+    astralDesc: "Полный набор функций для максимальной эффективности в Blox Fruits",
+    bluexDesc: "Быстрая атака, телепортация и улучшение характеристик",
+    xeterDesc: "Мощный скрипт для Blox Fruits с частыми обновлениями",
+    viewScript: "View Script",
+    copyBtn: "Copy",
+    copyScript: "Copy Script",
+    luaCode: "LUA КОД",
+    closeBtn: "Close",
+    footerText: "© 2026 Real Scripts Hub | Все скрипты предоставляются 'как есть'"
+  },
+  en: {
+    title: "REAL SCRIPTS",
+    subtitle: "Premium scripts for Roblox",
+    enterBtn: "Enter Catalog",
+    headerTitle: "Real Scripts Hub",
+    headerSubtitle: "Blox Fruits • Steal a Brainrot • 99 Nights",
+    catalogTitle: "Catalogs",
+    bloxBtn: "🍏 Blox Fruits",
+    stealBtn: "🧠 Steal a Brainrot",
+    nightsBtn: "🌙 99 Nights",
+    premiumBadge: "PREMIUM",
+    popularBadge: "POPULAR",
+    astralDesc: "Complete set of features for maximum efficiency in Blox Fruits",
+    bluexDesc: "Fast attack, teleportation and stats improvement",
+    xeterDesc: "Powerful script for Blox Fruits with frequent updates",
+    viewScript: "View Script",
+    copyBtn: "Copy",
+    copyScript: "Copy Script",
+    luaCode: "LUA CODE",
+    closeBtn: "Close",
+    footerText: "© 2026 Real Scripts Hub | All scripts are provided 'as is'"
+  }
+};
+
+function setLanguage(lang) {
+  // Обновляем активную кнопку
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.classList.remove('active');
+  });
+  event.target.classList.add('active');
+  
+  // Обновляем текст
+  document.querySelectorAll('[data-i18n]').forEach(element => {
+    const key = element.getAttribute('data-i18n');
+    if (translations[lang][key]) {
+      element.textContent = translations[lang][key];
+    }
+  });
+}
 
 // Скрипты для каталога
 const scripts = {
@@ -764,13 +807,12 @@ const scripts = {
     list: [
       '✅ Auto Farm - автоматический фарм',
       '✅ God Mode - режим бога',
-      '✅ Marines - поддержка команды Marines',
       '✅ ESP - полное отображение окружения',
       '✅ Teleport - быстрая телепортация',
-      '✅ Fast Attack - супер быстрые атаки'
+      '✅ Fast Attack - супер быстрые атаки',
+      '✅ Частые обновления'
     ],
     code: `getgenv().Version = "V4"
-getgenv().Team = "Marines"
 loadstring(game:HttpGet("https://raw.githubusercontent.com/TlDinhKhoi/Xeter/refs/heads/main/Main.lua"))()`
   }
 };
@@ -794,22 +836,6 @@ function openModal(key) {
   document.getElementById('modal').style.display = 'flex';
 }
 
-function copyCode(elementId) {
-  const element = document.getElementById(elementId);
-  const text = element.textContent;
-  
-  navigator.clipboard.writeText(text).then(() => {
-    const btn = event.target;
-    btn.textContent = 'Copied!';
-    btn.style.background = 'linear-gradient(45deg, #4CAF50, #8BC34A)';
-    
-    setTimeout(() => {
-      btn.textContent = 'Copy';
-      btn.style.background = '';
-    }, 1500);
-  });
-}
-
 function closeModal() {
   document.getElementById('modal').style.display = 'none';
 }
@@ -819,12 +845,13 @@ function copyAnimated() {
   
   navigator.clipboard.writeText(currentCode).then(() => {
     const btn = document.getElementById('copyBtn');
+    const originalText = btn.textContent;
     btn.textContent = 'Copied!';
     btn.style.background = 'linear-gradient(45deg, #4CAF50, #8BC34A)';
     btn.style.boxShadow = '0 0 20px rgba(76, 175, 80, 0.5)';
     
     setTimeout(() => {
-      btn.textContent = 'Copy Script';
+      btn.textContent = originalText;
       btn.style.background = 'linear-gradient(90deg, #7c3aed, #a78bfa)';
       btn.style.boxShadow = 'none';
     }, 1500);
